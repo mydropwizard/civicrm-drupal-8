@@ -27,7 +27,7 @@
   ],
   "require": {
     "composer/installers": "^1.0",
-    "civicrm/civicrm-core" : "dev-roundearth-4.7.24 as 4.7.24"
+    "civicrm/civicrm-core" : "4.7.*"
   },
   "extra": {
     "installer-name": "civicrm"
