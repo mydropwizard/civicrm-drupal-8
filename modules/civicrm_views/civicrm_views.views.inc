@@ -61,9 +61,9 @@ function civicrm_views_views_data() {
         'field' => 'id',
         'base' => $field['table'],
         'base field' => 'entity_id',
-        'title' => t('CiviCRM Custom Field: !title', array('!title' => $field['group'])),
-        'label' => t('CiviCRM Custom Field: !title', array('!title' => $field['group'])),
-        'help' => t('CiviCRM Custom Field: !title', array('!title' => $field['group'])),
+        'title' => t('CiviCRM Custom Field: @title', array('@title' => $field['group'])),
+        'label' => t('CiviCRM Custom Field: @title', array('@title' => $field['group'])),
+        'help' => t('CiviCRM Custom Field: @title', array('@title' => $field['group'])),
       ),
     );
 
@@ -663,7 +663,7 @@ function _civicrm_views_get_custom_fields() {
             LEFT JOIN civicrm_custom_group g ON g.id = f.custom_group_id
             where g.is_active = 1";
 
-  require_once 'api/class.api.php';
+  require_once 'api/v3/utils.php';
 
   $custom_fields = array();
   $dao = \CRM_Core_DAO::executeQuery($query);
