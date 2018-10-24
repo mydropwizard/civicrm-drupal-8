@@ -1,13 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains of \Drupal\taxonomy\TermBreadcrumbBuilder.
- */
-
 namespace Drupal\civicrm;
 
-use Drupal\civicrm\CivicrmPageState;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -20,10 +14,14 @@ use Drupal\Core\Url;
  * Provides a custom taxonomy breadcrumb builder that uses the term hierarchy.
  */
 class CivicrmBreadcrumbBuilder implements BreadcrumbBuilderInterface {
+
   use StringTranslationTrait;
 
   protected $civicrmPageState;
 
+  /**
+   * Class constructor.
+   */
   public function __construct(TranslationInterface $stringTranslation, CivicrmPageState $civicrmPageState) {
     $this->stringTranslation = $stringTranslation;
     $this->civicrmPageState = $civicrmPageState;
@@ -34,11 +32,23 @@ class CivicrmBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    */
   public function applies(RouteMatchInterface $route_match) {
     $route_object = $route_match->getRouteObject();
-    if ($route_object) {
-      $controller = $route_object->getDefault('_controller');
-      if (isset($controller) && $controller == 'Drupal\civicrm\Controller\CivicrmController::main') {
-        return TRUE;
-      }
+
+    // No route object is defined, so we can't inspect it.
+    if (!$route_object) {
+      return FALSE;
+    }
+
+    $controller = $route_object->getDefault('_controller');
+
+    // When we're looking at a page that does not come from a route to a
+    // controller (such as an entity, view, or something else), this can't be
+    // our CiviCRM controller.
+    if ($controller === NULL) {
+      return FALSE;
+    }
+
+    if ($controller === 'Drupal\civicrm\Controller\CivicrmController::main') {
+      return TRUE;
     }
     return FALSE;
   }
@@ -51,13 +61,12 @@ class CivicrmBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $breadcrumb->addLink(Link::createFromRoute($this->t('Home'), '<front>'));
 
     foreach ($this->civicrmPageState->getBreadcrumbs() as $name => $url) {
-      // Unfortunately, all urls have been passed through CRM_Utils_System::url,
-      // so we need to unpack the url to construct it as a Drupal Url object.
-      // Additionally, for some reason that I cannot fathom, CiviCRM is htmlentity
-      // encoding the urls — so we have to decode this first.
+      // All urls here have been passed trough CRM_Utils_System::url, so we have
+      // to parse and decode them before creating a drupal Url object.
       $url = Url::fromUserInput(html_entity_decode($url));
       $breadcrumb->addLink(new Link($name, $url));
     }
     return $breadcrumb;
   }
+
 }
