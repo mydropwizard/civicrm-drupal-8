@@ -55,6 +55,7 @@ function civicrm_requirements($phase) {
 
   /** @var \Civi\Setup $setup */
   $setup = _civicrm_setup();
+  /*
   if ($phase === 'install' && !$setup->checkAuthorized()->isAuthorized()) {
     $requirements['civicrm.checkAuthorized'] = [
       'title' => 'CiviCRM Installation Not Authorized',
@@ -63,6 +64,7 @@ function civicrm_requirements($phase) {
     ];
     return $requirements;
   }
+  */
 
   $severityMap = [
     'info' => REQUIREMENT_OK,
